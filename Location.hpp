@@ -1,39 +1,46 @@
 #pragma once
-#include <map>
-#include <string>
+
+#include <iostream>
 #include <vector>
 
 class Location
 {
 private:
-    std::string root;
-    std::map<std::vector<int>, std::string> errorPage;
-    std::map<std::string, int> redirection;
-    unsigned int allowMethod;
-    std::vector<std::string> index;
-    bool autoIndex;
-    size_t clientBodySize;
-
-    // setter
-    void setRoot(std::string& input);
-    bool setErrorPage(std::string const& sentence);
-    bool setRedirection(std::string const& sentence);
-    void setAutoIndex(std::string& input);
-    void setClientBodySize(std::string& input);
-    bool setAllowMethod(std::string& sentence);
-    void setIndex(std::string& sentence);
-
+	std::string _dir;
+	std::string _root;
+	std::vector<std::string> method;
+	std::string _redir;
+    std::map<std::string, std::string> cgi;
+	std::vector<std::string> indexs;
+	std::string					_index;
+	std::string					_autoindex;
+    std::string                 _upload_path;
 public:
-    Location();
-    ~Location();
-    bool fillLocationBlock(std::map<std::string, std::string>& mapSentence);
+	Location(void);
+	Location(const Location &copy);
+	Location &operator=(const Location &copy);
+	~Location(void);
 
-    // getter
-    std::string getRoot(void) const;
-    std::map<std::vector<int>, std::string> getErrorPage(void) const;
-    std::map<std::string, int> getRedirection(void) const;
-    unsigned int getAllowMethod(void) const;
-    std::vector<std::string> getIndex(void) const;
-    bool getAutoIndex(void) const;
-    size_t getClientBodySize(void) const;
+	void setPath(std::string path);
+	void setRoot(std::string root);
+	void setAllowedMethods(std::vector<std::string> allowed_methods);
+	void setRedirection(std::string redirection);
+    void setCgi(std::map<std::string, std::string> cgi);
+	void setIndexs(std::vector<std::string> indexs);
+	void setIndex(std::string word)		{_index = word;};
+	void setautoindex(std::string word)	{_autoindex = word;};
+    void setUploadPath(std::string upload_path);
+
+    void addCgi(std::string extension, std::string cgi);
+
+	std::string getDir(void) const;
+	std::string getRoot(void) const;
+	std::vector<std::string> getMethod(void) const;
+	std::string getRedir(void) const;
+    std::map<std::string, std::string> const &getCgi(void) const;
+	std::vector<std::string> getIndexs(void) const;
+	std::string					getIndex()		{return _index;};
+	std::string					getautoindex()	{return _autoindex;};
+    std::string                 getUploadPath(void) const;
+
 };

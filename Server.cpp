@@ -1,169 +1,142 @@
 #include "Server.hpp"
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
-#include <vector>
 
-Server::Server(): listen(80), serverName(""), root("/"), autoIndex(false), clientBodySize(0) {}
-
-Server::~Server() {}
-
-int Server::getListen() const
+Server::Server()
+    : _name(""), host(""), _listen("80"), _method(), _error_pages(), _locations(), cgi(), _root(""), _index(""), _body_size("0"), _autoindex("off"), _upload_path("")
 {
-    return this->listen;
 }
 
-std::map<std::string, Location> Server::getLocations(void) const
+Server::Server(const Server &copy)
 {
-    return this->locations;
+    *this = copy;
 }
 
-std::string Server::getServerName(void) const
+Server &Server::operator=(const Server &copy)
 {
-    return this->serverName;
-}
-std::string Server::getRoot(void) const
-{
-    return this->root;
-}
-
-std::map<std::vector<int>, std::string> Server::getErrorPage(void) const
-{
-    return this->errorPage;
-}
-
-std::map<std::string, int> Server::getRedirection(void) const
-{
-    return this->redirection;
-}
-
-bool Server::getAutoIndex(void) const
-{
-    return this->autoIndex;
-}
-
-unsigned int Server::getClientBodySize(void) const
-{
-    return this->clientBodySize;
-}
-
-std::string Server::getUploadPath() const
-{
-    return this->uploadedPath;
-}
-
-bool Server::fillServer(std::map<std::string, Location>& mapLocations, std::map<std::string, std::string>& mapSentence)
-{
-    std::map<std::string, std::string>::iterator it = mapSentence.begin();
-
-    this->locations = mapLocations;
-    while (it != mapSentence.end())
+    if (this != &copy)
     {
-        if (it->first == "listen")
-            this->setListen(it->second);
-        else if (it->first == "server_name")
-            this->setServerName(it->second);
-        else if (it->first == "root")
-            this->setRoot(it->second);
-        else if (it->first == "error_page")
-        {
-            if (this->setErrorPage(it->second))
-                return true;
-        }
-        else if (it->first == "return")
-        {
-            if (this->setRedirection(it->second))
-                return true;
-        }
-        else if (it->first == "autoindex")
-            this->setAutoIndex(it->second);
-        else if (it->first == "client_max_body_size")
-            this->setClientBodySize(it->second);
-        else if (it->first == "upload_path")
-            this->setUploadPath(it->second);
-        else
-            return true;
-        it++;
+        this->_name = copy._name;
+        this->host = copy.host;
+        this->_listen = copy._listen;
+        this->_method = copy._method;
+        this->_error_pages = copy._error_pages;
+        this->_locations = copy._locations;
+        this->_body_size = copy._body_size;
+        this->cgi = copy.cgi;
+        this->_root = copy._root;
+        this->_index = copy._index;
+        this->_upload_path = copy._upload_path;
+        this->_autoindex = copy._autoindex;
     }
-    return false;
+    return (*this);
 }
 
-void Server::setListen(std::string& input)
+Server::~Server()
 {
-    long parsedPort = strtod(input.c_str(), NULL);
-
-    if (parsedPort < 0 || parsedPort > 65535)
-        std::cout << "Warning : invalid port number" << std::endl;
-    this->listen = parsedPort;
 }
 
-void Server::setServerName(std::string& input)
+void Server::setServerName(std::string _name)
 {
-    this->serverName = input;
+    this->_name = _name;
+}
+void Server::setHost(std::string host)
+{
+    this->host = host;
+}
+void Server::setPort(std::string _listen)
+{
+    this->_listen = _listen;
+}
+void Server::setMethods(std::vector<std::string> methods)
+{
+    this->_method = methods;
+}
+void Server::setErrorPages(std::map<std::string, std::string> _error_pages)
+{
+    this->_error_pages = _error_pages;
+}
+void Server::setLocations(std::vector<Location *> _locations)
+{
+    this->_locations = _locations;
+}
+void Server::setCgi(std::map<std::string, std::string> cgi)
+{
+    this->cgi = cgi;
+}
+void Server::setRoot(std::string _root)
+{
+    this->_root = _root;
+}
+void Server::setIndex(std::string index)
+{
+    this->_index = index;
+}
+void Server::setMaxClientBodySize(std::string _body_size)
+{
+    this->_body_size = _body_size;
+}
+void Server::setUploadPath(std::string upload_path)
+{
+    this->_upload_path = upload_path;
 }
 
-void Server::setRoot(std::string& input)
+void Server::addMethod(std::string method)
 {
-    this->root = input;
+    this->_method.push_back(method);
+}
+void Server::addErrorPage(std::string error_code, std::string error_page)
+{
+    this->_error_pages.insert(std::pair<std::string, std::string>(error_code, error_page));
+}
+void Server::addLocation(Location *location)
+{
+    this->_locations.push_back(location);
+}
+void Server::addCgi(std::string extension, std::string cgi)
+{
+    this->cgi.insert(std::pair<std::string, std::string>(extension, cgi));
 }
 
-bool Server::setErrorPage(std::string const& sentence)
+std::string const &Server::getName() const
 {
-    std::stringstream sstream;
-    std::vector<std::string> tokens;
-    std::string token;
-    std::vector<int> vecErrorCode;
-    std::string errorPath;
-
-    sstream << sentence;
-    while (sstream >> token)
-        tokens.push_back(token);
-
-    if (tokens.size() < 2)
-        return true;
-    errorPath = tokens.back();
-    tokens.pop_back();
-
-    for (size_t i = 0; i < tokens.size(); i++)
-        vecErrorCode.push_back(std::strtod(tokens[i].c_str(), NULL));
-    this->errorPage.insert(std::pair<std::vector<int>, std::string>(vecErrorCode, errorPath));
-    return false;
+    return (this->_name);
+}   
+std::string const &Server::getHost() const
+{
+    return (this->host);
 }
-
-bool Server::setRedirection(std::string const& sentence)
+std::string const &Server::getListen() const
 {
-    std::stringstream sstream;
-    std::vector<std::string> tokens;
-    std::string token;
-    std::string redirectionPath;
-    int redirectionCode;
-
-    sstream << sentence;
-    while (sstream >> token)
-        tokens.push_back(token);
-
-    if (tokens.size() != 2)
-        return true;
-    redirectionCode = std::strtod(tokens[0].c_str(), NULL);
-    redirectionPath = tokens[1];
-    this->redirection[redirectionPath] = redirectionCode;
-    return false;
+    return (this->_listen);
 }
-
-void Server::setAutoIndex(std::string& input)
+std::vector<std::string> const &Server::getMethod() const
 {
-    if (input == "on")
-        this->autoIndex = true;
-    else
-        this->autoIndex = false;
+    return (this->_method);
 }
-
-void Server::setClientBodySize(std::string& input)
+std::map<std::string, std::string> const &Server::getError() const
 {
-    this->clientBodySize = std::strtod(input.c_str(), NULL);
+    return (this->_error_pages);
 }
-
-void Server::setUploadPath(std::string& input)
+std::vector<Location *> const &Server::getLocation() const
 {
-    this->uploadedPath = input;
+    return (this->_locations);
+}
+std::map<std::string, std::string> const &Server::getCgi() const
+{
+    return (this->cgi);
+}
+std::string const &Server::getRoot() const
+{
+    return (this->_root);
+}
+std::string const &Server::getIndex() const
+{
+    return (this->_index);
+}
+std::string const &Server::getBody() const
+{
+    return (this->_body_size);
+}
+std::string const &Server::getUploadPath() const
+{
+    return (this->_upload_path);
 }

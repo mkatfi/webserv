@@ -1,182 +1,93 @@
-#include "Location.hpp"
-#include "Config/Confi_Pars.hpp"
-#include "Server.hpp"
-#include <sstream>
-#include <cstdlib>
+#include "./Config/Parsing.hpp"
 
-// constructors
 Location::Location()
-    : root("/"), allowMethod(0), autoIndex(false), clientBodySize(0) {}
-// destructor
-Location::~Location() {}
-// copy constructors
-
-std::string Location::getRoot(void) const
+    : _dir(""), _root(""), method(), _redir(""), cgi(), indexs(), _upload_path("")
 {
-    return this->root;
 }
 
-std::map<std::vector<int>, std::string> Location::getErrorPage(void) const
+Location::Location(const Location &copy)
 {
-    return this->errorPage;
+    *this = copy;
 }
 
-std::map<std::string, int> Location::getRedirection(void) const
+Location &Location::operator=(const Location &copy)
 {
-    return this->redirection;
-}
-
-unsigned int Location::getAllowMethod(void) const
-{
-    return this->allowMethod;
-}
-
-std::vector<std::string> Location::getIndex(void) const
-{
-    return this->index;
-}
-
-bool Location::getAutoIndex(void) const
-{
-    return this->autoIndex;
-}
-
-size_t Location::getClientBodySize(void) const
-{
-    return this->clientBodySize;
-}
-
-// setter
-void Location::setRoot(std::string& input)
-{
-    this->root = input;
-}
-
-bool Location::setErrorPage(std::string const& sentence)
-{
-    std::stringstream sstream;
-    std::vector<std::string> tokens;
-    std::string token;
-    std::vector<int> vecErrorCode;
-    std::string errorPath;
-
-    sstream << sentence;
-    while (sstream >> token)
-        tokens.push_back(token);
-
-    if (tokens.size() < 2)
-        return true;
-    errorPath = tokens.back();
-    tokens.pop_back();
-
-    for (size_t i = 0; i < tokens.size(); i++)
-        vecErrorCode.push_back(std::strtod(tokens[i].c_str(), NULL));
-    this->errorPage.insert(std::pair<std::vector<int>, std::string>(vecErrorCode, errorPath));
-    return false;
-}
-
-bool Location::setRedirection(std::string const& sentence)
-{
-    std::stringstream sstream;
-    std::vector<std::string> tokens;
-    std::string token;
-    std::string redirectionPath;
-    int redirectionCode;
-
-    sstream << sentence;
-    while (sstream >> token)
-        tokens.push_back(token);
-
-    if (tokens.size() != 2)
-        return true;
-    redirectionCode = std::strtod(tokens[0].c_str(), NULL);
-    redirectionPath = tokens[1];
-    this->redirection[redirectionPath] = redirectionCode;
-    return false;
-}
-
-void Location::setAutoIndex(std::string& input)
-{
-    if (input == "on")
-        this->autoIndex = true;
-    else
-        this->autoIndex = false;
-}
-
-void Location::setClientBodySize(std::string& input)
-{
-    this->clientBodySize = std::strtod(input.c_str(), NULL);
-}
-
-bool Location::setAllowMethod(std::string& sentence)
-{
-    std::vector<std::string> tokens;
-    std::string token;
-    std::stringstream sstream;
-
-    sstream << sentence;
-    while (sstream >> token)
-        tokens.push_back(token);
-    for (size_t i = 0; i < tokens.size(); i++)
+    if (this != &copy)
     {
-        if (tokens[i] == "GET")
-            allowMethod |= GET;
-        else if (tokens[i] == "POST")
-            allowMethod |= POST;
-        else if (tokens[i] == "PUT")
-            allowMethod |= PUT;
-        else if (tokens[i] == "DELETE")
-            allowMethod |= DELETE;
-        else if (tokens[i] == "HEAD")
-            allowMethod |= HEAD;
-        else
-            return true;
+        this->_dir = copy._dir;
+        this->_root = copy._root;
+        this->method = copy.method;
+        this->_redir = copy._redir;
+        this->indexs = copy.indexs;
+        this->cgi = copy.cgi;
+        this->_upload_path = copy._upload_path;
     }
-    return false;
+    return (*this);
 }
 
-void Location::setIndex(std::string& sentence)
+Location::~Location()
 {
-    std::stringstream sstream;
-    std::string token;
-
-    sstream << sentence;
-    while (sstream >> token)
-        this->index.push_back(token);
 }
-// fucntions
-bool Location::fillLocationBlock(std::map<std::string, std::string>& mapSentence)
-{
-    std::map<std::string, std::string>::iterator it = mapSentence.begin();
 
-    while (it != mapSentence.end())
-    {
-        if (it->first == "root")
-            this->setRoot(it->second);
-        else if (it->first == "error_page")
-        {
-            if (this->setErrorPage(it->second))
-                return true;
-        }
-        else if (it->first == "return")
-        {
-            if (this->setRedirection(it->second))
-                return true;
-        }
-        else if (it->first == "allow_method")
-        {
-            if (this->setAllowMethod(it->second))
-                return true;
-        }
-        else if (it->first == "autoindex")
-            this->setAutoIndex(it->second);
-        else if (it->first == "client_max_body_size")
-            this->setClientBodySize(it->second);
-        else if (it->first == "index")
-            this->setIndex(it->second);
-        else
-            return true;
-        it++;
-    }
-    return false;
+void Location::setPath(std::string path)
+{
+    this->_dir = path;
+}
+void Location::setRoot(std::string root)
+{
+    this->_root = root;
+}
+void Location::setAllowedMethods(std::vector<std::string> allowed_methods)
+{
+    this->method = allowed_methods;
+}
+void Location::setRedirection(std::string redirection)
+{
+    this->_redir = redirection;
+}
+void Location::setCgi(std::map<std::string, std::string> cgi)
+{
+    this->cgi = cgi;
+}
+void Location::setIndexs(std::vector<std::string> indexs)
+{
+    this->indexs = indexs;
+}
+void Location::setUploadPath(std::string upload_path)
+{
+    this->_upload_path = upload_path;
+}
+
+void Location::addCgi(std::string extension, std::string cgi)
+{
+    this->cgi.insert(std::pair<std::string, std::string>(extension, cgi));
+}
+
+std::string Location::getDir() const
+{
+    return (this->_dir);
+}
+std::string Location::getRoot() const
+{
+    return (this->_root);
+}
+std::vector<std::string> Location::getMethod() const
+{
+    return (this->method);
+}
+std::string Location::getRedir() const
+{
+    return (this->_redir);
+}
+std::map<std::string, std::string> const &Location::getCgi() const
+{
+    return (this->cgi);
+}
+std::vector<std::string> Location::getIndexs() const
+{
+    return (this->indexs);
+}
+std::string Location::getUploadPath() const
+{
+    return (this->_upload_path);
 }

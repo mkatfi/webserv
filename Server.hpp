@@ -1,44 +1,72 @@
-
 #pragma once
 
-#include "Location.hpp"
+#include <iostream>
+#include <vector>
 #include <map>
-#include <string>
+#include "Location.hpp"
 
 class Server
 {
 private:
-    int listen;
-    std::string serverName;
-    std::string root;
-    std::map<std::vector<int>, std::string> errorPage;
-    std::map<std::string, int> redirection;
-    bool autoIndex;
-    size_t clientBodySize;
-    std::map<std::string, Location> locations;
-    std::string uploadedPath;
+    std::string _name;
+    std::string host;
+    std::string  _listen;
+    std::vector<std::string> _method;
+    std::map<std::string , std::string> _error_pages;
+    std::vector<Location *> _locations;
 
-    void setListen(std::string& input);
-    void setServerName(std::string& input);
-    void setRoot(std::string& input);
-    bool setErrorPage(std::string const& sentence);
-    bool setRedirection(std::string const& sentence);
-    void setAutoIndex(std::string& input);
-    void setClientBodySize(std::string& input);
-    void setUploadPath(std::string& input);
+    std::map<std::string, std::string> cgi;
+    std::string _root;
+    std::string _index;
+    std::string _body_size;
+    std::string	_autoindex;
+    std::string _upload_path;
 
 public:
-    Server();
-    ~Server();
-    bool fillServer(std::map<std::string, Location>& mapLocations, std::map<std::string, std::string>& mapSentence);
+    Server(void);
+    Server(const Server &copy);
+    Server &operator=(const Server &copy);
+    ~Server(void);
 
-    int getListen() const;
-    std::string getRoot() const;
-    std::map<std::vector<int>, std::string> getErrorPage() const;
-    std::map<std::string, int> getRedirection() const;
-    bool getAutoIndex() const;
-    unsigned int getClientBodySize() const;
-    std::map<std::string, Location> getLocations() const;
-    std::string getServerName() const;
-    std::string getUploadPath() const;
+    void setServerName(std::string server_name);
+    void setHost(std::string host);
+    void setPort(std::string _listen);
+    void setErrorPages(std::map<std::string, std::string> error_pages);
+    void setLocations(std::vector<Location *> locations);
+    void setMaxClientBodySize(std::string max_client_body_size);
+
+//++++++++++
+    void setMethods(std::vector<std::string> methods);
+    void setCgi(std::map<std::string, std::string> cgi);
+    void setRoot(std::string root);
+    void setIndex(std::string index);
+    void setautoindex(std::string word)					{_autoindex = word;};
+    void setUploadPath(std::string upload_path);
+//++++++++++
+
+
+    void addMethod(std::string method);
+    void addErrorPage(std::string error_code, std::string error_page);
+    void addLocation(Location *location);
+
+//++++++++++
+    void addCgi(std::string extension, std::string cgi);
+//++++++++++
+
+    std::string const &getName(void) const;
+    std::string const &getHost(void) const;
+    std::string const &getListen(void) const;
+    std::map<std::string, std::string> const &getError(void) const;
+    std::vector<Location *> const &getLocation(void) const;
+    std::string const &getBody(void) const;
+//++++++++++
+    std::vector<std::string> const &getMethod(void) const;
+    std::map<std::string, std::string> const &getCgi(void) const;
+    std::string const &getRoot(void) const;
+    std::string const &getIndex(void) const;
+    std::string        getautoindex()	{return _autoindex;};
+    std::string const &getUploadPath(void) const;
+//++++++++++
+
+    void print(void) const;
 };

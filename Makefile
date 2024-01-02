@@ -5,6 +5,9 @@ SRC = main.cpp\
 	Location.cpp\
 	Config/Confi_Pars.cpp\
 	Config/fun.cpp\
+	# ex00/Configuration.cpp\
+	# ex00/Server.cpp\
+	# ex00/Location.cpp\
 
 
 CXX = c++

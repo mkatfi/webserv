@@ -1,55 +1,45 @@
 #pragma once
 
-#include "../Server.hpp"
 #include <iostream>
-#include <map>
-#include <sstream>
 #include <vector>
-#define CONFIG_ERROR -1
+#include <fstream>
+#include <cstring>
+#include "../Server.hpp"
 
-enum METHOD
-{
-    GET = 1,
-    POST = 2,
-    PUT = 4,
-    DELETE = 8,
-    HEAD = 16,
-};
+# define RED	"\x1B[31m"
+# define RESET	"\x1B[0m"
 
-class Location;
-class Server;
-class ConfigParser
+// enum METHOD
+// {
+//     GET = 1,
+//     POST = 2,
+//     PUT = 4,
+//     DELETE = 8,
+//     HEAD = 16,
+// };
+
+class Conf
 {
 public:
-    std::map<int, Server> server;
-    void parseConfig(std::string const& configFileName);
-    ~ConfigParser();
-    ConfigParser();
+	Conf(void);
+	Conf(const Conf &copy);
+	Conf &operator=(const Conf &copy);
+	~Conf(void);
+
+	void setFileName(std::string file_name);
+	void setServers(std::vector<Server *> servers);
+
+	std::string getFileName(void) const;
+	std::vector<Server *> getServers(void) const;
+
+	// void print(void) const;
+	void print_all_data();
+
+	void parse(void);
+	void parseServerLine(std::vector<std::string> tokens, Server *server);
+	void parseLocationLine(std::vector<std::string> tokens, Location *location);
 
 private:
-    typedef std::map<int, Server> mapPortServer;
-    typedef std::map<std::string, Location> mapStrLocation;
-    typedef std::vector<std::string> vecStr;
-    typedef std::map<std::string, std::string> mapStrStr;
-
-    ConfigParser(ConfigParser const& other);
-    ConfigParser& operator=(ConfigParser const& rhs);
-
-    struct s_info
-    {
-        std::string inputToken;
-        std::map<std::string, Location> locations;
-        std::string locationDir;
-        std::vector<std::string> vecInput;
-        std::map<std::string, std::string> mapSentence;
-    };
-
-    static int parse_action_0(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_1(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_2(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_3(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_4(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_5(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_6(struct s_info& parse_info, mapPortServer& servers);
-    static int parse_action_7(struct s_info& parse_info, mapPortServer& servers);
+	std::string file_name;
+	std::vector<Server *> _servers;
 };
