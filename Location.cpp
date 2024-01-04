@@ -1,7 +1,7 @@
 #include "./Config/Parsing.hpp"
 
 Location::Location()
-    : _dir(""), _root(""), method(), _redir(""), cgi(), indexs(), _upload_path("")
+    : _dir(""), _root(""), method(), cgi(), indexs(), _upload_path("")
 {
 }
 
@@ -17,7 +17,6 @@ Location &Location::operator=(const Location &copy)
         this->_dir = copy._dir;
         this->_root = copy._root;
         this->method = copy.method;
-        this->_redir = copy._redir;
         this->indexs = copy.indexs;
         this->cgi = copy.cgi;
         this->_upload_path = copy._upload_path;
@@ -41,10 +40,10 @@ void Location::setAllowedMethods(std::vector<std::string> allowed_methods)
 {
     this->method = allowed_methods;
 }
-void Location::setRedirection(std::string redirection)
-{
-    this->_redir = redirection;
-}
+// void Location::setRedirection(std::string redirection)
+// {
+//     this->_redir = redirection;
+// }
 void Location::setCgi(std::map<std::string, std::string> cgi)
 {
     this->cgi = cgi;
@@ -75,10 +74,10 @@ std::vector<std::string> Location::getMethod() const
 {
     return (this->method);
 }
-std::string Location::getRedir() const
-{
-    return (this->_redir);
-}
+// std::string Location::getRedir() const
+// {
+//     return (this->_redir);
+// }
 std::map<std::string, std::string> const &Location::getCgi() const
 {
     return (this->cgi);

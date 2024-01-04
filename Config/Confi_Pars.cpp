@@ -1,14 +1,8 @@
 #include "Parsing.hpp"
+#include <cstdlib>
 
-// void debug(std::string const &msg)
-// {
-//     std::cerr << msg << std::endl;
-// }
-
-Conf::Conf()
-    : file_name(""), _servers()
-{
-}
+Conf::Conf(): file_name(""), _servers()
+{}
 
 Conf::Conf(const Conf &copy)
 {
@@ -26,8 +20,7 @@ Conf &Conf::operator=(const Conf &copy)
 }
 
 Conf::~Conf()
-{
-}
+{}
 // ############# setter #############
 
 void Conf::setFileName(std::string file_name)
@@ -52,13 +45,11 @@ void Conf::parse(void)
     while (std::getline(file, line))
     {
         line = trim(line);
-        // std::cout << "-- " << line << " --\n";
         if (line.empty() || line[0] == '#')
             continue;
         if (line[line.size() - 1] == ';')
             line = line.substr(0, line.size() - 1 - (line[line.size() - 2] == ' '));
         std::vector<std::string> tokens = split(line, ' ');
-        // std::cout << "==> " << tokens[0] << " <==\n";
         if (tokens[0] == "{")
             continue;
         if (tokens[0] == "server" && currentServer == NULL)
@@ -71,6 +62,8 @@ void Conf::parse(void)
         else if (currentServer != NULL && currentLocation == NULL && tokens[0] != "location")
             this->parseServerLine(tokens, currentServer);
 
+        if (tokens[0] == "location" && currentServer == NULL)
+        std::cerr << RED << "Error: " << RESET << "HHQQ******Mcha"<< std::endl, exit(1);
         if (tokens[0] == "location" && currentServer != NULL)
         {
             currentLocation = new Location();
@@ -163,8 +156,6 @@ void Conf::parseLocationLine(std::vector<std::string> tokens, Location *location
         // std::cout << tokens[2] << "\n";
         // std::cout << "<<"<<tokens[1] << ">>\n";
     }
-    else if (tokens[0] == "redirect" && tokens.size() > 2)
-        location->setRedirection(tokens[2]);
     else if (tokens[0] == "autoindex" && tokens.size() > 1)
         location->setautoindex(tokens[1]);
     else if (tokens[0] == "upload" && tokens.size() > 1)
@@ -227,78 +218,3 @@ std::vector<Server *> Conf::getServers() const
 // 	}
 // }
 
-
-// void Conf::print() const/ WebServ serv(envp, config_file.getServers());
-    // serv.run();
-    // free fds;<< std::endl;
-//     for (std::vector<Server*>::const_iterator it = this->servers.begin(); it != this->servers.end(); ++it)
-//     {
-//         //std::cout << std::endl << "--- [SERVER] ---" << std::endl;
-//         if (!(*it)->getServerName().empty())
-//             //std::cout << "server_name: " << (*it)->getServerName() << std::endl;
-//         if (!(*it)->getIp().empty())
-//             //std::cout << "ip: " << (*it)->getIp() << std::endl;
-//         if ((*it)->getPort() != -1)
-//             //std::cout << "port: " << (*it)->getPort() << std::endl;
-//         if (!(*it)->getRoot().empty())
-//             //std::cout << "root: " << (*it)->getRoot() << std::endl;
-//         if (!(*it)->getIndex().empty())
-//             //std::cout << "index: " << (*it)->getIndex() << std::endl;
-//         if ((*it)->getMaxClientBodySize() != 0)
-//             //std::cout << "max_client_body_size: " << (*it)->getMaxClientBodySize() << std::endl;
-//         if ((*it)->getErrorPages().size() > 0)
-//         {
-//             //std::cout << "error_pages: ";
-//             const std::map<int, std::string>& errorPages = (*it)->getErrorPages();
-//             for (std::map<int, std::string>::const_iterator it2 = errorPages.begin(); it2 != errorPages.end(); ++it2)
-//                 //std::cout << it2->first << " " << it2->second << " ";
-//             //std::cout << std::endl;
-//         }
-//         if ((*it)->getCgi().size() > 0)
-//         {
-//             //std::cout << "cgi: ";
-//             const std::map<std::string, std::string>& cgi = (*it)->getCgi();
-//             for (std::map<std::string, std::string>::const_iterator it2 = cgi.begin(); it2 != cgi.end(); ++it2)
-//                 //std::cout << it2->first << " " << it2->second << " ";
-//             //std::cout << std::endl;
-//         }
-//         if ((*it)->getMethods().size() > 0)
-//         {
-//             //std::cout << "allowed_methods: ";
-//             const std::vector<std::string>& methods = (*it)->getMethods();
-//             for (std::vector<std::string>::const_iterator it2 = methods.begin(); it2 != methods.end(); ++it2)
-//                 //std::cout << *it2 << " ";
-//             //std::cout << std::endl;
-//         }
-//         if ((*it)->getLocations().size() > 0)
-//         {
-//             //std::cout << "locations: " << std::endl;
-//             const std::vector<Location*> &locations = (*it)->getLocations();
-//             for (std::vector<Location*>::const_iterator it2 = locations.begin(); it2 != locations.end(); ++it2)
-//             {
-//                 //std::cout << std::endl << "    --- [LOCATION] ---" << std::endl;
-//                 //std::cout << "    path: " << (*it2)->getDir() << std::endl;
-//                 if (!(*it2)->getRoot().empty())
-//                     //std::cout << "    root: " << (*it2)->getRoot() << std::endl;
-//                 if ((*it2)->getIndexs().size() > 0)
-//                 {
-//                     //std::cout << "    index: ";
-//                     const std::vector<std::string>& indexs = (*it2)->getIndexs();
-//                     for (std::vector<std::string>::const_iterator it3 = indexs.begin(); it3 != indexs.end(); ++it3)
-//                         //std::cout << *it3 << " ";
-//                     //std::cout << std::endl;
-//                 }
-//                 if ((*it2)->getMethod().size() > 0)
-//                 {
-//                     //std::cout << "    allowed_methods: ";
-//                     const std::vector<std::string>& allowedMethods = (*it2)->getMethod();
-//                     for (std::vector<std::string>::const_iterator it3 = allowedMethods.begin(); it3 != allowedMethods.end(); ++it3)
-//                         //std::cout << *it3 << " ";
-//                     //std::cout << std::endl;
-//                 }
-//                 if (!(*it2)->getRedir().empty())
-//                     //std::cout << "    redirection: " << (*it2)->getRedir() << std::endl;
-//             }
-//         }
-//     }
-// }

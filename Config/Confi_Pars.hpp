@@ -9,17 +9,12 @@
 # define RED	"\x1B[31m"
 # define RESET	"\x1B[0m"
 
-// enum METHOD
-// {
-//     GET = 1,
-//     POST = 2,
-//     PUT = 4,
-//     DELETE = 8,
-//     HEAD = 16,
-// };
-
 class Conf
 {
+private:
+	std::string file_name;
+	std::vector<Server *> _servers;
+
 public:
 	Conf(void);
 	Conf(const Conf &copy);
@@ -32,14 +27,10 @@ public:
 	std::string getFileName(void) const;
 	std::vector<Server *> getServers(void) const;
 
-	// void print(void) const;
 	void print_all_data();
 
 	void parse(void);
 	void parseServerLine(std::vector<std::string> tokens, Server *server);
 	void parseLocationLine(std::vector<std::string> tokens, Location *location);
 
-private:
-	std::string file_name;
-	std::vector<Server *> _servers;
 };

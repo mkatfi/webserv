@@ -45,4 +45,3 @@ std::vector<std::string> split(std::string const &str, char delim)
     tokens.push_back(str.substr(start));
     return tokens;
 }
-
