@@ -111,7 +111,12 @@ void Conf::parseServerLine(std::vector<std::string> tokens, Server *server)
     else if (tokens[0] == "client_max_body_size" && tokens.size() > 1)
         server->setMaxClientBodySize(tokens[1]);
     else if (tokens[0] == "cgi_path" && tokens.size() > 2)
-        server->addCgi(tokens[1], tokens[2]);
+    {
+        if (tokens[2] ==  ":")
+            server->addCgi(tokens[1], tokens[3]);
+        else
+            server->addCgi(tokens[1], tokens[2]);
+    }
     else if (tokens[0] == "allow_methods" && tokens.size() > 1)
     {
         tokens.erase(tokens.begin());
@@ -152,9 +157,10 @@ void Conf::parseLocationLine(std::vector<std::string> tokens, Location *location
     }
     else if (tokens[0] == "cgi_path" && tokens.size() > 2)
     {
-        location->addCgi(tokens[1], tokens[2]);
-        // std::cout << tokens[2] << "\n";
-        // std::cout << "<<"<<tokens[1] << ">>\n";
+        if (tokens[2] ==  ":")
+            location->addCgi(tokens[1], tokens[3]);
+        else
+            location->addCgi(tokens[1], tokens[2]);
     }
     else if (tokens[0] == "autoindex" && tokens.size() > 1)
         location->setautoindex(tokens[1]);

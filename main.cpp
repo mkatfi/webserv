@@ -8,6 +8,6 @@ int main(int ac, char **av)
     Conf config_file;
     config_file.setFileName(av[1]);
     config_file.parse();
-    config_file.print_all_data();
+    // config_file.print_all_data();
 
 }
