@@ -1,31 +1,27 @@
 NAME = webserv
 
-SRC = main.cpp\
-	Server.cpp\
-	Location.cpp\
-	Config/Confi_Pars.cpp\
-	Config/fun.cpp\
-	# ex00/Configuration.cpp\
-	# ex00/Server.cpp\
-	# ex00/Location.cpp\
-
+CXXFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g3
 
 CXX = c++
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g3
+CFILES =  main.cpp Server.cpp Location.cpp Config/Confi_Pars.cpp Config/fun.cpp delete.cpp\
 
-
-OBJ = ${SRC:.cpp=.o}
+OBJ = ${CFILES:.cpp=.o}
 
 all: ${NAME}
 
-${NAME}: ${OBJ}
-	$(CXX) ${CXXFLAGS} $(OBJ) -o ${NAME}
+${NAME} : ${OBJ}
+	@${CXX} ${CXXFLAGS} -o $@ $^
 
-clean:
-	rm -f ${OBJ}
+%.o:%.cpp webserv.hpp
+	@${CXX} ${CXXFLAGS} -c $<
 
-fclean: clean
-	rm -f ${NAME}
+clean :
+	@rm -rf ${OBJ}
+fclean :clean
+	@rm -rf ${NAME}
 
-re: fclean all
+re : fclean all
+
+run : all clean
+	@ ./webserv

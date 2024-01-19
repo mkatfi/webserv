@@ -1,16 +1,20 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include <map>
 #include "Location.hpp"
+#include <cstdlib>
+#include <climits>
+
 
 class Server
 {
 private:
     std::string _name;
     std::string host;
-    std::string  _listen;
+    std::string _listen;
     std::vector<std::string> _method;
     std::map<std::string , std::string> _error_pages;
     std::vector<Location *> _locations;
@@ -40,7 +44,7 @@ public:
     void setCgi(std::map<std::string, std::string> cgi);
     void setRoot(std::string root);
     void setIndex(std::string index);
-    void setautoindex(std::string word)					{_autoindex = word;};
+    void setautoindex(std::string word);
     void setUploadPath(std::string upload_path);
 //++++++++++
 
@@ -49,7 +53,7 @@ public:
     void addErrorPage(std::string error_code, std::string error_page);
     void addLocation(Location *location);
 
-//++++++++++
+    //++++++++++
     void addCgi(std::string extension, std::string cgi);
 //++++++++++
 
@@ -64,9 +68,9 @@ public:
     std::map<std::string, std::string> const &getCgi(void) const;
     std::string const &getRoot(void) const;
     std::string const &getIndex(void) const;
-    std::string        getautoindex()	{return _autoindex;};
+    std::string const &getautoindex() const;
     std::string const &getUploadPath(void) const;
-//++++++++++
+    //++++++++++
 
     void print(void) const;
 };

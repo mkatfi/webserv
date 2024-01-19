@@ -8,14 +8,32 @@
 
 # define RED	"\x1B[31m"
 # define RESET	"\x1B[0m"
+struct pars_conf
+{
+	int server;
+	int listen;
+	int server_name ;
+	int host ;
+	int client_max_body_size ;
+	int root ;
+	int allow_methods ;
+	int index ;
+	int location ;
+	int autoindex ;
+	int upload ;
+	int error_page;
+	int redirection;
+};
 
 class Conf
 {
 private:
 	std::string file_name;
 	std::vector<Server *> _servers;
+	std::vector<std::string> pars_server;
 
 public:
+	pars_conf p;
 	Conf(void);
 	Conf(const Conf &copy);
 	Conf &operator=(const Conf &copy);
@@ -28,6 +46,9 @@ public:
 	std::vector<Server *> getServers(void) const;
 
 	void print_all_data();
+	int Check_semicolon_line(std::string line);
+	// int check_context(std::string line);
+	int check_context(pars_conf p);
 
 	void parse(void);
 	void parseServerLine(std::vector<std::string> tokens, Server *server);
